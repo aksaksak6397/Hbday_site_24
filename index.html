@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#120010">
 <title>Happy Birthday Chinuuu 💖</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -3077,4 +3081,261 @@ startTyping();
   }, {passive:false});
 })();
 </script>
+
+<!-- =========================================================
+     TRUE FULLSCREEN MODE
+     A normal web link cannot hide browser tabs/address bar without
+     a user gesture. The first tap/click enters Fullscreen API mode.
+     ========================================================= -->
+<style>
+html, body{
+  width:100%;
+  min-width:0;
+  margin:0;
+  padding:0;
+}
+
+html{
+  background:#120010;
+  overscroll-behavior:none;
+}
+
+body{
+  min-height:100dvh;
+  width:100%;
+  overflow:hidden;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  overscroll-behavior:none;
+}
+
+body:fullscreen,
+html:fullscreen{
+  width:100%;
+  height:100%;
+  min-height:100%;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  background:#120010;
+}
+
+body:-webkit-full-screen{
+  width:100%;
+  height:100%;
+  min-height:100%;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  background:#120010;
+}
+
+/* Make every fixed background layer cover the real fullscreen viewport. */
+#starfield,
+.orb{
+  width:100vw;
+  height:100dvh;
+}
+
+/* Safe-area support for phones with notches/home indicators. */
+.page{
+  min-height:100dvh;
+  min-height:100svh;
+  width:100%;
+  padding-top:max(40px, env(safe-area-inset-top));
+  padding-right:max(20px, env(safe-area-inset-right));
+  padding-bottom:max(40px, env(safe-area-inset-bottom));
+  padding-left:max(20px, env(safe-area-inset-left));
+}
+
+/* Fullscreen prompt: only appears if the browser did not enter
+   fullscreen automatically from the first user gesture. */
+#fullscreenPrompt{
+  position:fixed;
+  inset:0;
+  z-index:100000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(5,0,10,.82);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  opacity:1;
+  visibility:visible;
+  transition:opacity .3s ease,visibility .3s ease;
+  cursor:pointer;
+}
+#fullscreenPrompt.hide{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+#fullscreenPrompt .fullscreen-prompt-card{
+  max-width:430px;
+  width:min(92vw,430px);
+  padding:28px 24px;
+  border:1px solid rgba(255,182,193,.28);
+  border-radius:24px;
+  text-align:center;
+  background:linear-gradient(135deg,rgba(255,45,120,.16),rgba(255,215,0,.08));
+  box-shadow:0 20px 70px rgba(0,0,0,.5),0 0 35px rgba(255,45,120,.18);
+}
+#fullscreenPrompt .fullscreen-icon{
+  font-size:42px;
+  margin-bottom:10px;
+}
+#fullscreenPrompt h2{
+  margin:0 0 8px;
+  font-family:'Dancing Script',cursive;
+  font-size:2rem;
+  color:#ffd700;
+}
+#fullscreenPrompt p{
+  margin:0;
+  font-family:'Playfair Display',serif;
+  font-size:1rem;
+  line-height:1.6;
+  color:rgba(255,235,242,.9);
+}
+#fullscreenPrompt .fullscreen-hint{
+  margin-top:16px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:.95rem;
+  color:#ffb6c1;
+}
+
+@media (max-width:600px){
+  #fullscreenPrompt .fullscreen-prompt-card{
+    padding:24px 18px;
+  }
+}
+
+/* Once fullscreen is active there is no need for the prompt. */
+:fullscreen #fullscreenPrompt,
+:-webkit-full-screen #fullscreenPrompt{
+  display:none !important;
+}
+</style>
+
+<div id="fullscreenPrompt" role="button" tabindex="0" aria-label="Enter fullscreen">
+  <div class="fullscreen-prompt-card">
+    <div class="fullscreen-icon">⛶</div>
+    <h2>Happy Birthday 💖</h2>
+    <p>Tap once to open the birthday surprise in full screen.</p>
+    <div class="fullscreen-hint">Your tabs and address bar will disappear ✨</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const prompt = document.getElementById('fullscreenPrompt');
+
+  function isFullscreen(){
+    return !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.msFullscreenElement
+    );
+  }
+
+  function hidePrompt(){
+    if(prompt) prompt.classList.add('hide');
+  }
+
+  function showPrompt(){
+    if(prompt) prompt.classList.remove('hide');
+  }
+
+  async function enterFullscreen(){
+    const el = document.documentElement;
+
+    try{
+      if(document.fullscreenElement) {
+        hidePrompt();
+        return true;
+      }
+
+      if(el.requestFullscreen){
+        await el.requestFullscreen({navigationUI:'hide'});
+        hidePrompt();
+        return true;
+      }
+
+      if(el.webkitRequestFullscreen){
+        el.webkitRequestFullscreen();
+        hidePrompt();
+        return true;
+      }
+
+      if(el.msRequestFullscreen){
+        el.msRequestFullscreen();
+        hidePrompt();
+        return true;
+      }
+    }catch(err){
+      /* Some browsers require the gesture to happen on a visible
+         fullscreen control. The prompt remains so the user can tap again. */
+      console.log('Fullscreen request was blocked:', err);
+    }
+
+    return false;
+  }
+
+  /* The prompt itself is the guaranteed user gesture. */
+  if(prompt){
+    prompt.addEventListener('pointerdown', function(){
+      enterFullscreen();
+    }, {passive:true});
+
+    prompt.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        enterFullscreen();
+      }
+    });
+  }
+
+  /* Also try the first click/tap anywhere on the birthday page.
+     This means the user normally needs only one tap. */
+  let firstGesture = true;
+  document.addEventListener('pointerdown', function(e){
+    if(!firstGesture) return;
+    firstGesture = false;
+
+    if(!isFullscreen()){
+      enterFullscreen().then(ok=>{
+        if(ok) hidePrompt();
+      });
+    }else{
+      hidePrompt();
+    }
+  }, {passive:true});
+
+  document.addEventListener('fullscreenchange', function(){
+    if(isFullscreen()) hidePrompt();
+    else showPrompt();
+  });
+
+  document.addEventListener('webkitfullscreenchange', function(){
+    if(isFullscreen()) hidePrompt();
+    else showPrompt();
+  });
+
+  /* iPhone/iPad Safari does not expose the standard document fullscreen
+     API for ordinary webpages. Keep the page usable there; the user can
+     use Safari's Add to Home Screen mode for an app-like full-screen view. */
+  const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  if(isiOS && !isFullscreen()){
+    const hint = prompt && prompt.querySelector('.fullscreen-hint');
+    if(hint){
+      hint.textContent = 'On iPhone/iPad, use “Add to Home Screen” for app-style full screen ✨';
+    }
+  }
+})();
+</script>
+
 </html>
