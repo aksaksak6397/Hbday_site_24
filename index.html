@@ -1456,6 +1456,556 @@ body.mood5{background:radial-gradient(circle at 50% 20%,rgba(255,182,193,.1),tra
   .keypad-hint{font-size:.85rem;max-width:310px}
 }
 
+
+/* =========================================================
+   FINAL FULLSCREEN / MOBILE SCROLL FIX
+   - The browser itself never scrolls.
+   - Every screen occupies exactly the viewport.
+   - Only long screens (password + memories) may scroll internally.
+   - Scrollbars are hidden but touch/mouse-wheel scrolling still works.
+   ========================================================= */
+
+html{
+  width:100%;
+  height:100%;
+  min-height:100%;
+  overflow:hidden;
+  background:var(--deep);
+}
+
+body{
+  width:100%;
+  height:100%;
+  min-height:100%;
+  margin:0;
+  overflow:hidden !important;
+  overscroll-behavior:none;
+  position:relative;
+}
+
+.page{
+  position:fixed !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100dvh !important;
+  min-height:100dvh !important;
+  max-height:100dvh !important;
+  margin:0 !important;
+  padding:clamp(20px,4vh,40px) clamp(16px,4vw,40px) !important;
+  overflow:hidden;
+  overflow-x:hidden;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+
+.page.active{
+  position:fixed !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100dvh !important;
+  min-height:100dvh !important;
+  max-height:100dvh !important;
+  overflow:hidden;
+}
+
+.page > .card{
+  max-height:100%;
+}
+
+/* Password screen: keep it fullscreen; allow only its own content to scroll
+   on short/mobile displays. */
+#passwordPage{
+  position:fixed !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100dvh !important;
+  min-height:100dvh !important;
+  max-height:100dvh !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+#passwordPage::-webkit-scrollbar{
+  display:none;
+  width:0;
+  height:0;
+}
+
+#passwordPage .password-layout{
+  min-height:100%;
+  width:100%;
+  max-width:1500px;
+  margin:0 auto;
+  box-sizing:border-box;
+}
+
+/* Memory page is the one page that legitimately contains more content.
+   Its scrollbar is hidden; wheel/touch scrolling still works. */
+#page5{
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+  align-items:flex-start !important;
+  justify-content:flex-start !important;
+}
+#page5::-webkit-scrollbar{
+  display:none;
+  width:0;
+  height:0;
+}
+#page5 .card{
+  width:min(1020px,100%);
+  margin:0 auto;
+  flex:0 0 auto;
+}
+
+/* Keep pages 1–4 centered without creating document height. */
+#page1,#page2,#page3,#page4{
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+/* On short laptop screens, slightly compress page 4 instead of creating
+   browser/page overflow. */
+@media (max-height:760px) and (min-width:769px){
+  #page4 .card{padding-top:12px !important;padding-bottom:12px !important;}
+  #page4 .cake-stage{height:310px !important;transform:scale(.88);transform-origin:center center;}
+  #page4 .wish-hint{margin-bottom:10px !important;}
+}
+
+/* Mobile: use dynamic viewport height and keep controls inside the screen. */
+@media (max-width:900px){
+  .page{
+    padding:16px 12px !important;
+  }
+
+  #page1 .card,#page2 .card,#page3 .card{
+    width:min(100%,680px);
+    padding:24px 16px !important;
+  }
+
+  #page4 .card{
+    width:100%;
+    padding:10px 8px !important;
+  }
+
+  #page5{
+    padding:12px 8px 28px !important;
+  }
+
+  #page5 .card{
+    padding:18px 8px 40px !important;
+  }
+
+  #passwordPage{
+    padding:0 !important;
+  }
+
+  #passwordPage .password-layout{
+    min-height:100%;
+    height:auto;
+    padding:28px 16px 45px !important;
+  }
+}
+
+@media (max-width:600px){
+  #page1 .card,#page2 .card,#page3 .card{
+    padding:18px 10px !important;
+  }
+
+  #page1 .body-text,#page2 .body-text{
+    line-height:1.7;
+    margin-bottom:18px;
+  }
+
+  #page3 .body-text{
+    line-height:1.6;
+    margin-bottom:12px;
+  }
+
+  #page4 .cake-stage{
+    transform:scale(.72) !important;
+    transform-origin:center center !important;
+    margin-top:-18px !important;
+    margin-bottom:-55px !important;
+  }
+
+  #page4 .wish-hint{
+    font-size:.98rem;
+    margin-bottom:12px;
+  }
+
+  #passwordPage .password-layout{
+    padding:22px 12px 40px !important;
+    gap:26px !important;
+  }
+
+  #passwordPage .password-photo-frame img{
+    width:min(280px,72vw) !important;
+    height:min(380px,48vh) !important;
+  }
+
+  #passwordPage .password-photo-frame{
+    max-width:calc(100vw - 28px);
+  }
+}
+
+/* =========================================================
+   TOP-CENTER BACK BUTTON
+   Appears when the pointer approaches the middle of the top edge.
+   ========================================================= */
+#backBtn{
+  position:fixed;
+  top:16px;
+  left:50%;
+  transform:translateX(-50%) translateY(-12px) scale(.88);
+  width:44px;
+  height:44px;
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:50%;
+  background:rgba(20,0,16,.58);
+  color:#fff;
+  font-size:30px;
+  line-height:40px;
+  text-align:center;
+  padding:0;
+  z-index:2000;
+  cursor:pointer;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 8px 25px rgba(0,0,0,.25),0 0 20px rgba(255,45,120,.16);
+  transition:opacity .25s ease,transform .25s ease,background .25s ease,visibility 0s linear .25s;
+}
+#backBtn.show{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateX(-50%) translateY(0) scale(1);
+  transition:opacity .25s ease,transform .25s ease,background .25s ease,visibility 0s linear 0s;
+}
+#backBtn:hover{
+  background:rgba(255,45,120,.30);
+  transform:translateX(-50%) scale(1.08);
+}
+#backBtn:active{
+  transform:translateX(-50%) scale(.94);
+}
+
+@media (max-width:700px){
+  #backBtn{
+    top:10px;
+    width:40px;
+    height:40px;
+    font-size:27px;
+    line-height:36px;
+  }
+}
+
+/* Invisible top-center activation zone. */
+#topBackZone{
+  position:fixed;
+  top:0;
+  left:35%;
+  width:30%;
+  height:90px;
+  z-index:1999;
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   FINAL VIEWPORT LOCK — DESKTOP + PHONE
+   Keeps every page exactly inside the visible browser viewport.
+   ========================================================= */
+html, body {
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:100%;
+  margin:0;
+  padding:0;
+  overflow:hidden !important;
+  overscroll-behavior:none;
+  -webkit-text-size-adjust:100%;
+}
+
+body {
+  position:relative;
+  isolation:isolate;
+}
+
+.page {
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  height:100dvh !important;
+  min-height:100vh !important;
+  min-height:100dvh !important;
+  max-height:none !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+  overscroll-behavior:none;
+}
+
+.page.active {
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  height:100dvh !important;
+  min-height:100vh !important;
+  min-height:100dvh !important;
+  overflow:hidden !important;
+}
+
+/* Pages 1–4 always fit the visible screen. */
+#page1, #page2, #page3, #page4 {
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+#page1 .card, #page2 .card, #page3 .card, #page4 .card {
+  max-height:calc(100dvh - 20px);
+  overflow:visible;
+}
+
+/* Password page: the background fills the screen. On very short phones
+   only the password page itself can scroll, never the browser/body. */
+#passwordPage {
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  height:100dvh !important;
+  min-height:100vh !important;
+  min-height:100dvh !important;
+  max-height:none !important;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+#passwordPage::-webkit-scrollbar { display:none; }
+
+/* Memory gallery scrolls inside its own fullscreen page. */
+#page5 {
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  height:100dvh !important;
+  min-height:100vh !important;
+  min-height:100dvh !important;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+  align-items:flex-start !important;
+  justify-content:flex-start !important;
+}
+#page5::-webkit-scrollbar { display:none; }
+
+/* Desktop password layout: scale with the viewport instead of overflowing. */
+@media (min-width:901px) {
+  #passwordPage .password-layout {
+    width:100%;
+    height:100%;
+    min-height:0 !important;
+    max-width:1500px;
+    padding:clamp(18px,3vh,40px) clamp(24px,4vw,60px) !important;
+    gap:clamp(35px,5vw,80px) !important;
+  }
+
+  #passwordPage .password-photo-frame img {
+    width:min(420px, 30vw) !important;
+    height:min(620px, 78dvh) !important;
+  }
+
+  #passwordPage .password-left::before {
+    width:min(calc(420px + 12px), calc(30vw + 12px));
+    height:min(calc(620px + 12px), calc(78dvh + 12px));
+  }
+}
+
+/* Phone: make the password screen compact enough to open as a true
+   single-screen composition on normal phones. */
+@media (max-width:900px) {
+  #passwordPage .password-layout {
+    width:100%;
+    min-height:100%;
+    height:auto;
+    padding:clamp(14px,2.5vh,24px) 12px 28px !important;
+    gap:clamp(14px,2.5vh,24px) !important;
+  }
+
+  #passwordPage .password-photo-frame img {
+    width:min(250px, 58vw) !important;
+    height:min(300px, 36dvh) !important;
+  }
+
+  #passwordPage .password-photo-frame {
+    padding:6px !important;
+  }
+
+  #passwordPage .password-left::before {
+    width:min(264px, calc(58vw + 12px));
+    height:min(314px, calc(36dvh + 12px));
+  }
+
+  #passwordPage .password-left::after {
+    width:min(254px, calc(58vw + 4px));
+    height:min(304px, calc(36dvh + 4px));
+  }
+
+  #passwordPage .photo-caption {
+    bottom:-23px;
+    font-size:.85rem;
+  }
+
+  #passwordPage .password-right .script-title {
+    font-size:clamp(1.55rem,7vw,2.15rem) !important;
+    line-height:1.12;
+    margin-bottom:10px;
+  }
+
+  #passwordPage .secret-badge {
+    font-size:.52rem;
+    letter-spacing:1.5px;
+    padding:5px 10px;
+    margin-bottom:5px;
+  }
+
+  #passwordPage .heading-stars {
+    font-size:.85rem;
+    letter-spacing:6px;
+    margin-bottom:2px;
+  }
+
+  #passwordPage .divider {
+    margin:9px 0;
+  }
+
+  #passwordPage .password-right .serif-sub {
+    font-size:.9rem !important;
+    margin-bottom:8px;
+  }
+
+  #passwordPage .password-whisper {
+    font-size:.85rem;
+    margin:-2px 0 3px;
+  }
+
+  #passwordPage .code-shell {
+    padding:7px 8px 6px;
+    margin:5px 0 2px;
+    border-radius:15px;
+  }
+
+  #passwordPage .code-label {
+    font-size:.48rem;
+    letter-spacing:2px;
+    margin-bottom:4px;
+  }
+
+  #passwordPage .passcode-display {
+    gap:3px !important;
+  }
+
+  #passwordPage .passcode-display span {
+    width:30px !important;
+    height:38px !important;
+    font-size:18px !important;
+    border-radius:8px;
+  }
+
+  #passwordPage #access-msg {
+    min-height:16px;
+    margin:2px 0 0;
+    font-size:.8rem;
+  }
+
+  #passwordPage .keypad {
+    grid-template-columns:repeat(3, 54px) !important;
+    gap:7px !important;
+    margin-top:7px !important;
+  }
+
+  #passwordPage .keypad button {
+    width:54px !important;
+    height:54px !important;
+    font-size:20px !important;
+  }
+
+  #passwordPage .keypad-hint {
+    margin-top:7px;
+    font-size:.72rem;
+    max-width:280px;
+  }
+}
+
+/* Very small / short phones: compact a little further rather than
+   making the browser itself scroll. */
+@media (max-width:430px) and (max-height:750px) {
+  #passwordPage .password-layout {
+    gap:10px !important;
+    padding:10px 8px 20px !important;
+  }
+
+  #passwordPage .password-photo-frame img {
+    width:min(205px,52vw) !important;
+    height:min(235px,30dvh) !important;
+  }
+
+  #passwordPage .password-left::before {
+    width:min(219px,calc(52vw + 12px));
+    height:min(249px,calc(30dvh + 12px));
+  }
+
+  #passwordPage .password-left::after {
+    width:min(209px,calc(52vw + 4px));
+    height:min(239px,calc(30dvh + 4px));
+  }
+
+  #passwordPage .password-right .script-title {
+    font-size:1.42rem !important;
+  }
+
+  #passwordPage .password-right .serif-sub {
+    font-size:.78rem !important;
+  }
+
+  #passwordPage .password-whisper {
+    font-size:.72rem;
+  }
+
+  #passwordPage .keypad {
+    grid-template-columns:repeat(3,48px) !important;
+    gap:5px !important;
+  }
+
+  #passwordPage .keypad button {
+    width:48px !important;
+    height:48px !important;
+    font-size:18px !important;
+  }
+
+  #passwordPage .passcode-display span {
+    width:27px !important;
+    height:34px !important;
+  }
+}
+
+/* Prevent images from ever expanding a page beyond its viewport. */
+img, video, svg {
+  max-width:100%;
+}
 </style>
 </head>
 <body>
@@ -1476,6 +2026,8 @@ body.mood5{background:radial-gradient(circle at 50% 20%,rgba(255,182,193,.1),tra
   <div class="dot" id="dot4"></div>
   <div class="dot" id="dot5"></div>
 </div>
+<button id="backBtn" type="button" aria-label="Go back" onclick="previousPage()">×</button>
+<div id="topBackZone" aria-hidden="true"></div>
 
 
 <!-- PASSWORD PAGE 1-->
@@ -1871,14 +2423,13 @@ setInterval(()=>{
 /* NAVIGATION */
 let musicStarted=false;
 function nextPage(n){
-
   const current=document.querySelector('.page.active');
   const next=document.getElementById('page'+n);
 
   if(!next || current===next)return;
 
-  // Put the new page on top while the current page fades away.
-  next.classList.add('page-transition-ready');
+  // Put the next screen above the current one. Every page is fixed to
+  // the viewport, so changing pages can never create a browser scrollbar.
   next.style.zIndex='11';
   if(current)current.style.zIndex='10';
 
@@ -1892,8 +2443,13 @@ function nextPage(n){
       current.classList.remove('active','page-exit');
       current.style.zIndex='';
     }
-    next.classList.remove('page-transition-ready');
+
     next.style.zIndex='';
+
+    // Always start the new page at its own top.
+    if(next.id==='page5' || next.id==='passwordPage'){
+      next.scrollTop=0;
+    }
 
     for(let i=1;i<=5;i++){
       document.getElementById('dot'+i).classList.toggle('active',i===n);
@@ -1903,8 +2459,80 @@ function nextPage(n){
 
     if(n===2)startTyping();
     if(n===3)animateMessage();
+
+    updateBackButton();
   },700);
 }
+
+function previousPage(){
+  const current=document.querySelector('.page.active');
+  if(!current)return;
+
+  const map={
+    page2:'page1',
+    page3:'page2',
+    page4:'page3',
+    page5:'page4'
+  };
+
+  const previousId=map[current.id];
+  if(previousId){
+    const previous=document.getElementById(previousId);
+    if(previous) nextPage(Number(previousId.replace('page','')));
+  }
+}
+
+function updateBackButton(){
+  const current=document.querySelector('.page.active');
+  const btn=document.getElementById('backBtn');
+  if(!btn || !current)return;
+
+  // No back button on the secret password screen or first page.
+  const canGoBack = /^page[2-5]$/.test(current.id);
+  btn.setAttribute('aria-hidden',canGoBack ? 'false' : 'true');
+}
+
+let backHideTimer=null;
+
+function showBackButtonTemporarily(){
+  const btn=document.getElementById('backBtn');
+  const current=document.querySelector('.page.active');
+  if(!btn || !current || !/^page[2-5]$/.test(current.id))return;
+
+  btn.classList.add('show');
+  clearTimeout(backHideTimer);
+  backHideTimer=setTimeout(()=>btn.classList.remove('show'),2200);
+}
+
+// Desktop: moving close to the middle of the top edge reveals ×.
+document.addEventListener('mousemove',e=>{
+  const nearTop=e.clientY<=95;
+  const nearCenter=Math.abs(e.clientX-(window.innerWidth/2))<=Math.max(110,window.innerWidth*.13);
+
+  if(nearTop && nearCenter){
+    showBackButtonTemporarily();
+  }
+});
+
+// Touch: tapping the top-center area also reveals ×.
+document.addEventListener('touchstart',e=>{
+  const t=e.touches && e.touches[0];
+  if(!t)return;
+
+  const nearTop=t.clientY<=100;
+  const nearCenter=Math.abs(t.clientX-(window.innerWidth/2))<=Math.max(130,window.innerWidth*.16);
+
+  if(nearTop && nearCenter){
+    showBackButtonTemporarily();
+  }
+},{passive:true});
+
+window.addEventListener('resize',()=>{
+  // Never let the browser restore a document scroll position.
+  window.scrollTo(0,0);
+});
+
+
 
 /* TYPING */
 function startTyping(){
@@ -2099,6 +2727,7 @@ function showFinalScreen(){
 
 /* INIT */
 document.body.classList.add('mood1');
+updateBackButton();
 startTyping();
 </script>
 </body>
